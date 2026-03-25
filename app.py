@@ -9,15 +9,16 @@ import os
 st.set_page_config(page_title="Churn AI Predictor Pro", layout="wide")
 
 
-# --- MODEL LOADING ---
 @st.cache_resource
 def load_assets():
-    model_path = os.path.expanduser('~/churn_model.pkl')
+    model_path = 'churn_model.pkl'
+    # Check karein ke file mojud hai ya nahi
     if not os.path.exists(model_path):
         return None
+    
+    # Agar mojud hai, to niche wali lines chalengi
     with open(model_path, 'rb') as f:
         return pickle.load(f)
-
 
 model = load_assets()
 
@@ -36,11 +37,10 @@ else:
     # Tabs for Single vs Batch
     tab1, tab2 = st.tabs(["👤 Single Customer Prediction", "📂 Batch CSV Prediction"])
 
-    # --- TAB 1: SINGLE PREDICTION (Aapka Purana Code) ---
+    # --- TAB 1: SINGLE PREDICTION  
     with tab1:
         c1, c2, c3 = st.columns(3)
-        # (Yahan aapka pichla columns wala code aayega...)
-        # Note: Space bachane ke liye main sirf logic likh raha hoon
+        
         with c1:
             age = st.number_input("Age", 18, 100, 30)
             gender = st.selectbox("Gender", [0, 1], format_func=lambda x: "Male" if x == 0 else "Female")
@@ -71,7 +71,7 @@ else:
             else:
                 st.success(f"Low Risk: {(1 - prob) * 100:.1f}%")
 
-    # --- TAB 2: BATCH PREDICTION (Naya Feature) ---
+    # --- TAB 2: BATCH PREDICTION --
     with tab2:
         st.subheader("Upload CSV for Bulk Analysis")
         uploaded_file = st.file_uploader("CSV file yahan drop karein", type=["csv"])
@@ -83,19 +83,19 @@ else:
 
             if st.button("Process Batch Prediction"):
                 try:
-                    # Model ke training columns ke mutabiq data filter karein
+                    
                     model_features = model.get_booster().feature_names
-                    # Check karein ke saare columns hain ya nahi
+                    
                     missing = [c for c in model_features if c not in data.columns]
 
                     if missing:
                         st.error(f"Missing Columns: {missing}")
                     else:
-                        # Prediction karein
+                        # Prediction 
                         predictions = model.predict(data[model_features])
                         probabilities = model.predict_proba(data[model_features])[:, 1]
 
-                        # Result ko original data mein add karein
+                        # Add result in original dataset
                         data['Churn_Prediction'] = predictions
                         data['Churn_Probability'] = probabilities
                         data['Status'] = data['Churn_Prediction'].map({1: '⚠️ At Risk', 0: '✅ Safe'})
