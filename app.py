@@ -12,30 +12,30 @@ st.set_page_config(page_title="Churn AI Predictor Pro", layout="wide")
 @st.cache_resource
 def load_assets():
     model_path = 'churn_model.pkl'
-    # Check karein ke file mojud hai ya nahi
+    # Check file present or not
     if not os.path.exists(model_path):
         return None
     
-    # Agar mojud hai, to niche wali lines chalengi
+    # if file is present so the file is run
     with open(model_path, 'rb') as f:
         return pickle.load(f)
 
 model = load_assets()
 
 # --- APP UI ---
-st.title("🚀 Customer Intelligence & Batch Prediction Tool")
+st.title("🚀 Customer churn Prediction Tool")
 st.markdown("---")
 
 if model is None:
-    st.error("⚠️ Model file 'churn_model.pkl' nahi mili. Pehle model save karein.")
+    st.error("⚠️ Model file 'churn_model.pkl' not found. first save your model.")
 else:
     # Sidebar Information
     st.sidebar.header("Instructions")
     st.sidebar.info(
-        "Batch prediction ke liye aisi CSV upload karein jis mein training wale saare 15 columns mojud hon.")
+        "For the churn prediction please upload the csv which contains 15 columns that we were used in training.")
 
     # Tabs for Single vs Batch
-    tab1, tab2 = st.tabs(["👤 Single Customer Prediction", "📂 Batch CSV Prediction"])
+    tab1, tab2 = st.tabs(["👤 Single Customer Prediction", "📂 churn CSV Prediction"])
 
     # --- TAB 1: SINGLE PREDICTION  
     with tab1:
@@ -116,4 +116,4 @@ else:
                     st.error(f"Error: {e}")
 
 st.markdown("---")
-st.caption("Developed by Baber Ali | Data Scientist")
+st.caption("Developed by Usman Waris | Data Scientist")
